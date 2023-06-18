@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Exercise5</title>
+
+	<style>
+		* {
+			box-sizing: border-box;
+		}
+
+		.w-33 {
+			width: calc(100% / 3);
+		}
+
+		.w-100 {
+			width: 100%;
+		}
+
+		.col-2 {
+			width: 50%;
+		}
+
+		.col-3 {
+			width: calc(100% / 3);
+		}
+
+		[class*="col-"] {
+			float: left;
+		}
+
+		.clearfix {
+			content: "";
+			display: table;
+			clear: both;
+		}
+
+		.table {
+			display: table;
+			border-collapse: collapse;
+			border: 1px solid black;
+		}
+
+		.row {
+			display: table-row;
+			border: 1px solid black;
+		}
+
+		.cell {
+			display: table-cell;
+			border: 1px solid black;
+		}
+	</style>
+</head>
+
+<body>
+	<img src="images/LogoTourist.gif" alt="">
+	<h3 style="color: rgb(128,128,1); text-align: center;">MỘT SỐ ĐỊA ĐIỂM DU LỊCH</h3>
+	<div>
+		<div class="clearfix w-100"
+			style="color: rgb(52,102,153); background-color: rgb(247,247,247); text-align: center; font-weight: bold;">
+			<div class="col-2">Địa danh</div>
+			<div class="col-2">Tỉnh-Thành phố</div>
+		</div>
+		<div class="clearfix w-100">
+			<div class="col-2">Suối nước nóng</div>
+			<div class="col-2">Bình Châu-Vũng Tàu</div>
+		</div>
+		<div class="clearfix w-100">
+			<div class="col-2">Biển Hồ Cốc</div>
+			<div class="col-2">Bình Châu-Vũng Tàu</div>
+		</div>
+		<div class="clearfix w-100">
+			<div class="col-2">Mũi Né</div>
+			<div class="col-2">Phan Thiết-Bình Thuận</div>
+		</div>
+		<div class="clearfix w-100">
+			<div class="col-2">Suối vàng-bạc</div>
+			<div class="col-2">Đà Lạt-Lâm Đồng</div>
+		</div>
+	</div>
+
+	<h3
+		style="margin: 0px; background-color: rgb(226,226,226); color: rgb(51,153,102); width: 100%; border: 1px solid black; border-bottom: 0px; text-align: center;">
+		MỘT SỐ DANH
+		LAM THẮNG CẢNH
+	</h3>
+	<div class="table" style="text-align: center; width: 100%;">
+		<div class="clearfix w-100 row" style="background-color: rgb(239,239,239); color: rgb(52,103,154);">
+			<div class="w-33 cell">Đồi cù ở Đà Lạt</div>
+			<div class="w-33 cell">Huế-Lăng Cổ</div>
+			<div class="w-33 cell">Đèo Hải Vân-Đà Nẵng</div>
+		</div>
+		<div class="clearfix w-100 row" style="vertical-align: middle;">
+			<div class="w-33 cell">
+				<img src="images/sapa2.gif" alt="">
+			</div>
+			<div class="w-33 cell">
+				<img src="images/h18.gif" alt="">
+			</div>
+			<div class="w-33 cell">
+				<img src="images/h18.gif" alt="">
+			</div>
+		</div>
+	</div>
+
+	<div>
+		<p style="text-align: center;">
+			Mọi chi tiết xin liên hệ <br>
+			Văn phòng du lịch Saigontourist gần nhất của bạn <br>
+			Điện thoại: (08) 8735868
+		</p>
+	</div>
+</body>
+
+</html>

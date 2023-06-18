@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Exercise3</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+
+	<style>
+		.columns {
+			border: 2px solid darkgrey;
+			border-radius: 5px;
+			padding-top: 15px;
+		}
+
+		.alert {
+			max-width: 500px;
+			margin: auto;
+		}
+	</style>
+
+	<script>
+		$(document).ready(function () {
+
+			// đọc dữ liệu ngay khi tải trang xong
+
+			$.get("http://localhost/api/get-students.php", function (response, status) {
+				loadStudents(response.data);
+			}, "json");
+
+			$(".update-student").prop('disabled', true);
+
+			$(".add-student").click(function () {
+				let name = $('#name').val();
+				let email = $('#email').val();
+				let phone = $('#phone').val();
+
+				if (name.length === 0 || email.length === 0 || phone.length === 0) {
+					showFailedAlert('Parameters not valid');
+				} else {
+					$.post("http://localhost/api/add-student.php", { name, email, phone }, function (response, status) {
+						// To get the ID of the recently added student to display
+						$.get("http://localhost/api/get-students.php", function (response, status) {
+							let listStudent = response.data;
+							let recentlyAddedStudent = listStudent[listStudent.length - 1];
+							let idOfRecentlyAddedStudent = recentlyAddedStudent.id;
+
+							let tb = $('#table-body');
+							tb.append(`<tr data-id="${idOfRecentlyAddedStudent}">
+											<td>${idOfRecentlyAddedStudent}</td>
+											<td>${name}</td>
+											<td>${email}</td>
+											<td>${phone}</td>
+											<td>
+												<button class="btn btn-primary" onclick="updateStudent(this)">Edit</button>  |  <button class="btn btn-danger" onclick="confirmRemoval(this)">Delete</button>
+											</td>
+										</tr>`)
+						}, "json");
+
+						showSuccessAlert(response.data);
+
+						// Reset value of input to empty when add successfully
+						$('#name').val('');
+						$('#email').val('');
+						$('#phone').val('');
+					}, "json");
+				}
+			});
+
+			$('.update-student').click(function (event) {
+				let id = $('#studentID').val();
+				let name = $('#name').val();
+				let email = $('#email').val();
+				let phone = $('#phone').val();
+
+				let tr = $(`tr[data-id="${id}"]`);
+				let list_td = tr.find('td');
+
+				$.post("http://localhost/api/update-student.php", { id, name, email, phone }, function (response, status) {
+					if (!response.status) {
+						showFailedAlert(response.data);
+					} else {
+						showSuccessAlert(response.data);
+
+						// Reset value of input to empty when edit successfully
+						$('#name').val('');
+						$('#email').val('');
+						$('#phone').val('');
+
+						$('.add-student').prop('disabled', false);
+						$('.update-student').prop('disabled', true);
+
+						// Update the display table
+						list_td[1].innerText = name;
+						list_td[2].innerText = email;
+						list_td[3].innerText = phone;
+					}
+				}, "json").fail(function (jqXHR, textStatus, errorThrown) {
+					console.log("Error: " + errorThrown);
+					console.log(jqXHR.responseText); // Check the server response (should have this)
+				});
+			});
+
+			$('#confirm-delete-button').click(function (event) {
+				let id = $('#confirm-removal-modal').data('id');
+				let tr = $(`tr[data-id="${id}"]`);
+				$.post("http://localhost/api/delete-student.php", { id }, function (response, status) {
+					if (response.status) {
+						tr.remove();
+						showSuccessAlert(response.data);
+					} else {
+						showFailedAlert(response.data);
+					}
+				}, "json").fail(function (jqXHR, textStatus, errorThrown) {
+					console.log("Error: " + errorThrown);
+					console.log(jqXHR.responseText); // Check the server response (should have this)
+				});
+			})
+		});
+
+		function loadStudents(students) {
+			let tb = $('#table-body');
+			tb.find('tr').remove();
+			students.forEach(function (student) {
+				tb.append(`<tr data-id="${student.id}">
+                    <td>${student.id}</td>
+                    <td>${student.name}</td>
+                    <td>${student.email}</td>
+                    <td>${student.phone}</td>
+                    <td>
+                        <button class="btn btn-primary" onclick="updateStudent(this)">Edit</button>  |  <button class="btn btn-danger" onclick="confirmRemoval(this)">Delete</button>
+                    </td>
+                </tr>`)
+			})
+		}
+
+		function updateStudent(editBtn) {
+			$('.add-student').prop('disabled', true);
+			$('.update-student').prop('disabled', false);
+
+			let tdOfEditBtn = $(editBtn).parent();
+			let tr = tdOfEditBtn.parent();
+			let list_td = tr.find('td');
+
+			let id = list_td[0].innerText;
+			let name = list_td[1].innerText;
+			let email = list_td[2].innerText;
+			let phone = list_td[3].innerText;
+
+			// Infos will be display on form for edit
+			$('#studentID').val(id);
+			$('#name').val(name);
+			$('#email').val(email);
+			$('#phone').val(phone);
+		}
+
+
+
+		function showFailedAlert(msg) {
+			$('.alert-danger').removeClass('hide');
+			$('.alert-danger').html(`
+			<strong>Failed!</strong> ${msg}`);
+			$(".alert-danger").fadeTo(2000, 500).slideUp(500, function () {
+				$(".alert-danger").slideUp(500);
+			});
+		}
+
+		function showSuccessAlert(msg) {
+			// Show success alert
+			$('.alert-success').removeClass('hide');
+			$('.alert-success').html(`
+			<strong>Success!</strong> ${msg}`);
+			// Auto close alert
+			$(".alert-success").fadeTo(2000, 500).slideUp(500, function () {
+				$(".alert-success").slideUp(500);
+			});
+		}
+
+
+		// show confirm dialog when delete
+		function confirmRemoval(deleteBtn) {
+			let tdOfDeleteBtn = $(deleteBtn).parent();
+			let tr = tdOfDeleteBtn.parent();
+			let list_td = tr.find('td');
+
+			let id = list_td[0].innerText;
+			let name = list_td[1].innerText;
+
+			document.getElementById("producer-name").innerHTML = name;
+			$('#confirm-removal-modal').modal({ show: true });
+			$('#confirm-removal-modal').data('id', id);
+		}
+	</script>
+
+	<div class="container">
+		<h1>jQuery</h1>
+		<p>Khi trang web vừa được tải, cần gửi một request đến server, nhận về danh sách sinh viên đang có & hiện lên
+			bảng.</p>
+		<p>Nhấn <b>Add</b> để thêm một sinh viên vào danh sách: trước hết thông tin sẽ gửi lên server và lưu vào
+			database, server sẽ trả về kết quả. Nếu kết quả là <b>true</b> thì đưa thông tin sinh viên vừa thêm vào
+			bảng. Nếu lỗi hoặc thành công thì hiện thông báo tương ứng như phía dưới rồi tự ẩn đi sau 5 giây.</p>
+		<p>Khi nhấn <b>Edit</b> thông tin sẽ được chuyển qua form để sửa, lúc này disable nút <b>Add</b> và enable nút
+			<b>Update</b>, quá trình update cũng tương tự như thêm, gửi thông tin lên server, nhận kết quả rồi cập nhật
+			bảng/hiển thị thông báo tương ứng.
+		</p>
+		<p>Khi nhấn <b>Delete</b> thì hiện dialog xác nhận trước rồi gửi lệnh xóa lên server, lúc nhận kết quả về làm
+			tương tự các bước trước.</p>
+		<div class="row">
+			<div class="col-sm-6 col-md-5 columns">
+
+
+				<form class="form-horizontal">
+
+					<input type="hidden" name="id" id="studentID">
+
+					<div class="form-group">
+						<label class="control-label col-sm-2" for="name">Name:</label>
+						<div class="col-sm-6">
+							<input type="text" class="form-control" id="name" placeholder="Enter name">
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="control-label col-sm-2" for="email">Email:</label>
+						<div class="col-sm-6">
+							<input type="email" class="form-control" id="email" placeholder="Enter email">
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label class="control-label col-sm-2" for="phone">Phone:</label>
+						<div class="col-sm-6">
+							<input type="text" class="form-control" id="phone" placeholder="Enter phone">
+						</div>
+					</div>
+
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-10">
+							<button type="button" class="btn btn-default add-student">Add</button>
+							<button type="button" class="btn btn-success update-student">Update</button>
+						</div>
+					</div>
+				</form>
+
+
+			</div> <!-- Col 1 -->
+			<div class="col-sm-6 col-md-7 columns">
+
+				<table class="table table-hover">
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th>Name</th>
+							<th>Email</th>
+							<th>Phone</th>
+							<th>Action</th>
+						</tr>
+					</thead>
+					<tbody id="table-body">
+						<tr>
+							<td>1</td>
+							<td>Lam Truong</td>
+							<td>john@example.com</td>
+							<td>01234567789</td>
+							<td>
+								<a href="#">Edit</a> | <a href="#" onclick="confirmRemoval()">Delete</a>
+							</td>
+						</tr>
+						<tr>
+							<td>2</td>
+							<td>Cam Ly</td>
+							<td>john@example.com</td>
+							<td>01234567789</td>
+							<td>
+								<a href="#">Edit</a> | <a href="#" onclick="confirmRemoval()">Delete</a>
+							</td>
+						</tr>
+						<tr>
+							<td>3</td>
+							<td>My Tam</td>
+							<td>john@example.com</td>
+							<td>01234567789</td>
+							<td>
+								<a href="#" onclick="showFailedDialog()">Edit</a> | <a href="#"
+									onclick="confirmRemoval()">Delete</a>
+							</td>
+						</tr>
+
+					</tbody>
+				</table>
+
+
+			</div> <!-- col 2-->
+		</div>
+
+
+		<br><br>
+		<div class="alert alert-success alert-dismissable fade in hide">
+			<!-- <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+			<strong>Success!</strong> Delete student success. -->
+		</div>
+		<br>
+		<div class="alert alert-danger alert-dismissable fade in hide">
+			<!-- <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+			<strong>Failed!</strong> An unknown eror occured. Please try again later. -->
+		</div>
+
+	</div>
+
+
+	<!-- Confirm Removal Modal -->
+	<div class="modal fade" id="confirm-removal-modal" role="dialog">
+		<div class="modal-dialog">
+
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Xóa sinh viên</h4>
+				</div>
+				<div class="modal-body">
+					<p>Bạn có chắc chắn muốn xóa sinh viên <strong id="producer-name">My Tam</strong>?</p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" id="confirm-delete-button" class="btn btn-danger"
+						data-dismiss="modal">Xóa</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">Không</button>
+				</div>
+			</div>
+
+		</div>
+	</div><!-- Confirm Removel modal -->
+
+
+</body>
+
+</html>

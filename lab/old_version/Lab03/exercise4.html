@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset="UTF-8">
+	<title>Table</title>
+</head>
+
+<body>
+
+	<style>
+		* {
+			box-sizing: border-box;
+		}
+
+		select {
+			float: left;
+		}
+
+		img {
+			float: left;
+		}
+	</style>
+
+
+	<select id="imageList" name="imageList" size="10">
+		<option value="pic_001.jpg">pic_001.jpg</option>
+		<option value="pic_002.jpg">pic_002.jpg</option>
+		<option value="pic_003.jpg">pic_003.jpg</option>
+		<option value="pic_004.jpg">pic_004.jpg</option>
+		<option value="pic_005.jpg">pic_005.jpg</option>
+		<option value="pic_006.jpg">pic_006.jpg</option>
+		<option value="pic_007.jpg">pic_007.jpg</option>
+		<option value="pic_008.jpg">pic_008.jpg</option>
+		<option value="pic_009.jpg">pic_009.jpg</option>
+		<option value="pic_010.jpg">pic_010.jpg</option>
+	</select>
+	<img src="images/pic_001.jpg" id="imageView">
+	<button type="button" id="backBtn">Back</button>
+	<button type="button" id="startBtn">Start slideshow</button>
+	<button type="button" id="nextBtn">Next</button>
+	<p id="imageLabel">pic_001.jpg (10/55)</p>
+
+	<script>
+		let imageList = document.getElementById('imageList');
+		let imageView = document.getElementById('imageView');
+		let imageLabel = document.getElementById('imageLabel');
+		let backBtn = document.getElementById('backBtn');
+		let nextBtn = document.getElementById('nextBtn');
+		let startBtn = document.getElementById('startBtn');
+		let startSlideshow;
+		let imageIndex = 0;
+
+		function selectImage(event) {
+			imageIndex = event.target.selectedIndex;
+			displayImage(imageIndex);
+			if (imageIndex === event.target.options.length - 1) {
+				event.target.options[0].selected = true;
+			}
+		}
+
+		function nextImage() {
+			imageIndex++;
+			if (imageIndex >= imageList.options.length) {
+				imageIndex = imageIndex % imageList.options.length;
+			}
+			displayImage(imageIndex);
+			imageList.options[imageIndex].selected = true;
+		}
+
+		function prevImage() {
+			imageIndex--;
+			if (imageIndex < 0) {
+				imageIndex = imageList.options.length - 1;
+			}
+			displayImage(imageIndex);
+			imageList.options[imageIndex].selected = true;
+		}
+
+		function displayImage(index) {
+			let imageName = imageList.options[index].value;
+			imageView.setAttribute('src', "images/" + imageName);
+			imageLabel.innerText = `${imageName} (${index + 1}/${imageList.options.length})`;
+		}
+
+		imageList.addEventListener('change', selectImage);
+
+		nextBtn.addEventListener('click', nextImage)
+
+		backBtn.addEventListener('click', prevImage);
+
+		startBtn.addEventListener('click', function (event) {
+			if (event.target.innerText == "Start slideshow") {
+				event.target.innerText = "Stop slideshow";
+				backBtn.setAttribute('disabled', '');
+				nextBtn.setAttribute('disabled', '');
+				startSlideshow = setInterval(nextImage, 1000);
+			} else {
+				event.target.innerText = "Start slideshow";
+				backBtn.removeAttribute('disabled');
+				nextBtn.removeAttribute('disabled');
+				clearInterval(startSlideshow);
+			}
+		})
+	</script>
+</body>
+
+</html>

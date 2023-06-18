@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Exercise03</title>
+
+	<style>
+		div {
+			margin-top: 5px;
+		}
+
+		button:hover {
+			cursor: pointer;
+		}
+	</style>
+</head>
+
+<body>
+	<form action="">
+		<div>
+			<label for="">Your first name:</label> <input type="text">
+		</div>
+		<div>
+			<label for="">Your student ID number:</label> <input type="text">
+		</div>
+		<br>
+		<div>
+			what age bracket are you in: <br>
+			<input type="radio" name="age"> 1 to 18 years <br>
+			<input type="radio" name="age"> 19 to 25 years <br>
+			<input type="radio" name="age"> 26 to 40 years <br>
+			<input type="radio" name="age"> over 40 years
+		</div>
+		<br>
+		<div>
+			the best times for me to read email is: <br>
+			<input type="checkbox" name="times[]"> Morning <br>
+			<input type="checkbox" name="times[]"> Afternoon <br>
+			<input type="checkbox" name="times[]"> Night <br>
+			<input type="checkbox" name="times[]"> midnight to dawn
+		</div>
+		<br>
+		<div>
+			What football team do you go for? <br>
+			<select name="football_team">
+				<option value="0">MU</option>
+				<option value="1">Man City</option>
+				<option value="2">Liverpool</option>
+				<option value="3">AC Milan</option>
+			</select>
+		</div>
+		<br>
+		<button type="submit" style="background-color: white; border: none;">
+			<img src="https://www.clipartmax.com/png/full/16-166810_submit-button-icon-png.png" style="width: 50px;" alt="">
+		</button>
+	</form>
+</body>
+
+</html>

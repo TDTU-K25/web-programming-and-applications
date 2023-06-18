@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+
+	<style>
+		#sidebar,
+		#sidebar td {
+			border: 1px solid darkgoldenrod;
+			border-collapse: collapse;
+		}
+
+		#sidebar td {
+			font-weight: bold;
+			color: darkgoldenrod;
+			background-color: moccasin;
+		}
+
+		label {
+			color: blue;
+		}
+
+		button {
+			border: 1px solid blue;
+		}
+
+		td[style="text-align: right;"] {
+			background-color: lightgray;
+		}
+	</style>
+</head>
+
+<body>
+	<img style="width: 100%;" src="images/car3.jpg" alt="">
+	<table style="width: 100%;">
+		<tr>
+			<td style="width: 20%; vertical-align: top; background-color: lightgray;">
+				<table id="sidebar" style="width: 100%;">
+					<tr>
+						<td>Quảng cáo</td>
+					</tr>
+					<tr>
+						<td>Giới thiệu sản phẩm</td>
+					</tr>
+					<tr>
+						<td>Các đại lý</td>
+					</tr>
+					<tr>
+						<td>Tuyển dụng</td>
+					</tr>
+					<tr>
+						<td>Liên hệ</td>
+					</tr>
+					<tr>
+						<td>Đặt hàng</td>
+					</tr>
+				</table>
+			</td>
+			<td style="vertical-align: top;">
+				<table style="width: 100%;">
+					<tr>
+						<td colspan="2">
+							<h2 style="color: red; text-align: center; background-color: lightcoral; margin-top: 0px;">
+								Đăng ký giấy
+								phép lái xe ôtô</h2>
+						</td>
+					</tr>
+					<tr>
+						<td style="text-align: right;">
+							<label for="fullName">Họ tên</label>
+						</td>
+						<td>
+							<input type="text" name="fullName" id="fullName" required>
+						</td>
+					</tr>
+					<tr>
+						<td style="text-align: right;">
+							<label for="">Số CMND</label>
+						</td>
+						<td>
+							<input type="number" name="" id="">
+						</td>
+					</tr>
+					<tr>
+						<td style="text-align: right;">
+							<label for="">Hộ khẩu</label>
+						</td>
+						<td>
+							<select>
+								<option value="">Hà Nội</option>
+								<option value="" selected>TP.Hồ Chí Minh</option>
+							</select>
+							<span style="color: lightgray; margin-left: 100px;">Load hình xe</span>
+						</td>
+					</tr>
+					<tr>
+						<td style="text-align: right;">
+							<label for="">Hình xe</label>
+						</td>
+						<td>
+							<select>
+								<option value="">Suzuki</option>
+								<option value="" selected>Toyota</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td style="text-align: right;">
+							<label for="">Nội dung</label>
+						</td>
+						<td>
+							<textarea name="" id="" cols="20" rows="5"></textarea>
+						</td>
+					</tr>
+					<tr>
+						<td style="background-color: lightgray;"></td>
+						<td>
+							<button type="button">Thêm</button>
+							<button type="reset">Xóa</button>
+						</td>
+					</tr>
+				</table>
+
+				<table style="width: 100%; border-collapse: collapse; border: 1px solid darkgoldenrod;">
+					<tr style="background-color: gray;">
+						<th colspan="3" style="color: goldenrod;">DANH SÁCH ĐĂNG KÝ XE</th>
+					</tr>
+					<tr style="background-color: lightgray; color: grey; border: 1px solid darkgoldenrod;">
+						<th style="border: 1px solid darkgoldenrod;">STT</th>
+						<th style="border: 1px solid darkgoldenrod;">HỌ TÊN</th>
+						<th style="border: 1px solid darkgoldenrod;">XEM CHI TIẾT</th>
+					</tr>
+					<tr style="color: blue;">
+						<td style="border: 1px solid darkgoldenrod;">
+							1
+						</td>
+						<td style="border: 1px solid darkgoldenrod;">
+							Nguyễn Thị Thanh Thảo
+						</td>
+						<td style="border: 1px solid darkgoldenrod;">
+							chi tiết
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+	</table>
+</body>
+
+</html>

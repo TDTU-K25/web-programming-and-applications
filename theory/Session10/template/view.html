@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>QLSV</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script>
+        function show_students(students) {
+            let tb = $("#dssv")
+            tb.find('tr').remove()
+            let tr = ''
+            for(let i=0; i<students.length;i++) {
+                tr += `<tr>
+                    <td>${students[i].mssv}</td>
+                    <td>${students[i].hoten}</td>
+                    <td>${students[i].namsinh}</td>
+                    <td>${students[i].tenlop}</td>
+                    <td><span class="btn btn-info">Sửa</span> <span class="btn btn-danger">Xoá</span></td>
+                </tr>`
+            }
+            tb.append(tr)
+        }
+        function get_classes() {
+            fetch('lopapi.php').then(res=>res.json())
+            .then(json=>{
+                if (json.success) {
+                    let cbo = $("#malop")
+                    for(let i=0;i<json.data.length;i++) {
+                        let lop = json.data[i]
+                        cbo.append(`<option value="${lop.ms}">${lop.tenlop}</option>`)
+                    }
+                }
+                else 
+                    alert(json.message)
+            })
+            .catch(err=>console.log(err))
+        }
+        function get_students() {
+            fetch('service.php').then(res=>res.json())
+            .then(json=>{
+                if (json.success)
+                    show_students(json.data)
+                else 
+                    alert(json.message)
+            })
+            .catch(err=>console.log(err))
+        }
+        function add_student_click() {
+            let sv = {
+                mssv: $('#mssv').val(),
+                hoten: $('#hoten').val(),
+                namsinh: $('#namsinh').val(),
+                malop: $('#malop').val(),
+            }
+            fetch('add-student.php', {method: 'post', headers: {'Content-Type': 'application/json'}}, JSON.stringify(sv))
+            .then(res=>res.json())
+            .then(json=>{
+                get_students()
+            })
+            .catch(err => console.log(err))
+        }
+        $(function() {
+            get_students()
+            get_classes()
+            $('#btnadd').click(add_student_click)
+        })
+    </script>
+</head>
+<body>
+
+<style>
+    .container{
+        max-width: 600px;
+        margin: auto;
+    }
+
+    checkbox{
+        margin-right: 10px;
+    }
+</style>
+
+
+<div class="container">
+    <div>
+        <table class="table table-hover">
+            <tr>
+                <td>MSSV:</td>
+                <td><input type="text" id="mssv" /></td>
+            </tr>
+            <tr>
+                <td>Họ tên:</td>
+                <td><input type="text" id="hoten" /></td>
+            </tr>
+            <tr>
+                <td>Năm sinh:</td>
+                <td><input type="text" id="namsinh" /></td>
+            </tr>
+            <tr>
+                <td>Lớp:</td>
+                <td>
+                    <select id="malop">
+
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><input type="button" class="btn btn-primary" id="btnadd" value="Thêm mới"/><input type="button" class="btn btn-primary" id="btnedit" value="Lưu"/></td>
+            </tr>
+        </table>
+    </div>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>MSSV</th>
+                <th>Họ tên</th>
+                <th>Năm sinh</th>
+                <th>Lớp</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody id="dssv">
+
+        </tbody>
+        <tfoot>
+            <tr>
+                <th>MSSV</th>
+                <th>Họ tên</th>
+                <th>Năm sinh</th>
+                <th>Lớp</th>
+                <th></th>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+
+</body>
+</html>

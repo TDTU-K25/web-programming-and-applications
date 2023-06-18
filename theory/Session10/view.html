@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Student Management</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+		integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous" />
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+		integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+		crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+		integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+		crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+		integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+		crossorigin="anonymous"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+		integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+		crossorigin="anonymous" referrerpolicy="no-referrer" />
+	<script>
+		function show_students(students) {
+			let tbody = $("#listStudent");
+			tbody.find("tr").remove();
+			for (let i = 0; i < students.length; i++) {
+				tbody.append(generate_tr(students[i]));
+			}
+		}
+
+		function generate_tr(student) {
+			let tr = `<tr>
+					<td>${student.id}</td>
+					<td>${student.name}</td>
+					<td>${student.yob}</td>
+					<td>${student.class_name}</td>
+					<td>
+						<span data-id=${student.id} class="btn btn-info update">
+							Sửa
+						</span>
+						<span data-id=${student.id} class="btn btn-danger delete">
+							Xoá
+						</span>
+					</td>
+				</tr>`;
+			return tr;
+		}
+
+		function get_classes() {
+			fetch("class_api.php")
+				.then((response) => response.json())
+				.then((json) => {
+					if (json.success) {
+						let cbo = $("#class_id");
+						for (let i = 0; i < json.data.length; i++) {
+							let c = json.data[i];
+							cbo.append(`<option value="${c.id}">${c.name}</option>`);
+						}
+					} else {
+						alert(json.message);
+					}
+				})
+				.catch((err) => console.log(err));
+		}
+
+		function get_students() {
+			fetch("service.php")
+				.then((response) => response.json())
+				.then((json) => {
+					console.log(json);
+					if (json.success) {
+						show_students(json.data);
+					} else {
+						alert(json.message);
+					}
+				})
+				.catch((err) => console.log(err));
+		}
+
+		function add_student() {
+			let student = {
+				id: $("#id").val(),
+				name: $("#name").val(),
+				yob: $("#yob").val(),
+				class_id: $("#class_id").val(),
+			};
+			fetch("service.php", {
+				method: "post",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(student),
+			})
+				.then((response) => response.json())
+				.then((json) => {
+					get_students();
+				})
+				.catch((err) => console.log(err));
+		}
+
+		$(function () {
+			get_classes();
+			get_students();
+			$("#addBtn").click(add_student);
+
+			// Delete
+			// Note: Assign the event handler to elements before the elements are rendered => The elements are not assigned the event handler
+			// The code below fix this
+			// bubble event
+			$("#listStudent").on("click", ".delete", function (event) {
+				let id = $(this).data("id");
+				fetch("service.php" + "?id=" + id, {
+					method: "delete",
+				})
+					.then((response) => response.json())
+					.then((json) => {
+						if (json.success) {
+							$(this).closest("tr").remove();
+						}
+					});
+			});
+
+			// Update
+			$("#updateBtn").prop("disabled", "true");
+			$("#listStudent").on("click", ".update", function (event) {
+				let info = $(this).closest("tr").find("td");
+				let id = $(this).data("id");
+				let name = info[1].innerText;
+				let yob = info[2].innerText;
+				let c = info[3].innerText;
+				$("option").each(function () {
+					if ($(this).text() === c) {
+						$(this).prop("selected", true);
+						return false; // break
+					}
+				});
+				$("input[name='id']").val(id);
+				$("input[name='name']").val(name);
+				$("input[name='yob']").val(yob);
+				$("input[name='class_id']").val(c);
+				$("#addBtn").prop("disabled", true);
+				$("#updateBtn").prop("disabled", false);
+				$("#updateBtn").data("id", id);
+			});
+
+			$("#updateBtn").click(function (event) {
+				let id = $(this).data("id");
+				let name = $("input[name='name']").val();
+				let yob = $("input[name='yob']").val();
+				let class_id = $("select").val();
+				fetch("service.php", {
+					method: "put",
+					body: JSON.stringify({
+						id: id,
+						name: name,
+						yob: yob,
+						class_id: class_id,
+					}),
+				})
+					.then((response) => response.json())
+					.then((json) => {
+						if (json.success) {
+							let info = $("#listStudent")
+								.find(`.update[data-id=${$(this).data("id")}]`)
+								.closest("tr")
+								.find("td");
+							info[0].innerText = id;
+							info[1].innerText = name;
+							info[2].innerText = yob;
+							$("option").each(function () {
+								if ($(this).attr("value") === class_id) {
+									$(this).prop("selected", true);
+									info[3].innerText = $(this).text();
+									return false; // break
+								}
+							});
+						}
+					});
+				$("#addBtn").prop("disabled", false);
+				$(this).prop("disabled", true);
+			});
+		});
+	</script>
+</head>
+
+<body>
+	<style>
+		.container {
+			max-width: 600px;
+			margin: auto;
+		}
+
+		checkbox {
+			margin-right: 10px;
+		}
+	</style>
+
+	<div class="container">
+		<div>
+			<table class="table table-hover">
+				<tr>
+					<td>MSSV:</td>
+					<td><input type="text" id="id" name="id" readonly /></td>
+				</tr>
+				<tr>
+					<td>Họ tên:</td>
+					<td><input type="text" id="name" name="name" /></td>
+				</tr>
+				<tr>
+					<td>Năm sinh:</td>
+					<td><input type="date" id="yob" name="yob" /></td>
+				</tr>
+				<tr>
+					<td>Lớp:</td>
+					<td>
+						<select id="class_id" name="class_id"></select>
+					</td>
+				</tr>
+				<tr>
+					<td></td>
+					<td>
+						<input type="button" class="btn btn-primary" id="addBtn" value="Add" />
+						<input type="button" class="btn btn-primary" id="updateBtn" value="Update" />
+					</td>
+				</tr>
+			</table>
+		</div>
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th>MSSV</th>
+					<th>Họ tên</th>
+					<th>Năm sinh</th>
+					<th>Lớp</th>
+					<th>Action</th>
+				</tr>
+			</thead>
+			<tbody id="listStudent"></tbody>
+			<tfoot>
+				<tr>
+					<th>MSSV</th>
+					<th>Họ tên</th>
+					<th>Năm sinh</th>
+					<th>Lớp</th>
+					<th>Action</th>
+				</tr>
+			</tfoot>
+		</table>
+	</div>
+</body>
+
+</html>

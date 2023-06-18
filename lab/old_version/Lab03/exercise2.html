@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Bootstrap Example</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+
+	<style>
+		.container {
+			max-width: 600px;
+		}
+	</style>
+
+	<div class="container">
+		<h2>Add student</h2>
+		<form action="/action_page.php">
+
+			<div class="form-group">
+				<label for="firstname">First name:</label>
+				<input type="text" class="form-control" id="firstname" placeholder="Enter first name" name="firstname">
+			</div>
+			<div class="form-group">
+				<label for="lastname">Last name:</label>
+				<input type="text" class="form-control" id="lastname" placeholder="Enter last name" name="lastname">
+			</div>
+
+			<div class="form-group ">
+				<label for="email">Email:</label>
+				<input type="email" class="form-control" id="email" placeholder="Enter email" name="email">
+			</div>
+
+			<div id="errorMsg"></div>
+
+			<button type="button" class="btn btn-default" id="addBtn">Add</button>
+		</form>
+
+		<br>
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th>Firstname</th>
+					<th>Lastname</th>
+					<th>Email</th>
+					<th>Delete</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>John</td>
+					<td>Doe</td>
+					<td>john@example.com</td>
+					<td><button onclick="deleteStudent(this)">Delete</button></td>
+				</tr>
+				<tr>
+					<td>Mary</td>
+					<td>Moe</td>
+					<td>mary@example.com</td>
+					<td><button onclick="deleteStudent(this)">Delete</button></td>
+				</tr>
+
+			</tbody>
+		</table>
+	</div>
+
+	<script>
+		function validateEmail(email) {
+			if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
+				return true;
+			}
+			return false;
+		}
+
+		function validateForm() {
+
+			let firstNameBox = document.getElementById('firstname');
+			let lastNameBox = document.getElementById('lastname');
+			let emailBox = document.getElementById('email');
+			let errorMsgBox = document.getElementById('errorMsg');
+
+			let firstName = firstNameBox.value;
+			let lastName = lastNameBox.value;
+			let email = emailBox.value;
+
+			errorMsgBox.style.color = "red";
+
+			let isValid;
+			if (firstName.length === 0) {
+				errorMsgBox.innerText = "Enter your first name";
+				isValid = false;
+			} else if (lastName.length === 0) {
+				errorMsgBox.innerText = "Enter your last name";
+				isValid = false;
+			} else if (email.length === 0) {
+				errorMsgBox.innerText = "Enter your email";
+				isValid = false;
+			} else if (!validateEmail(email)) {
+				errorMsgBox.innerText = "Your email is incorrect";
+				isValid = false;
+			} else {
+				errorMsgBox.innerText = "";
+				isValid = true;
+			}
+			return isValid;
+		}
+
+		let addBtn = document.getElementById('addBtn');
+
+		addBtn.addEventListener('click', function (event) {
+			if (validateForm()) {
+				let firstNameBox = document.getElementById('firstname');
+				let lastNameBox = document.getElementById('lastname');
+				let emailBox = document.getElementById('email');
+
+				let firstName = firstNameBox.value;
+				let lastName = lastNameBox.value;
+				let email = emailBox.value;
+
+				let tr = document.createElement('tr');
+				tr.innerHTML = `<td>${firstName}</td>
+                    <td>${lastName}</td>
+                    <td>${email}</td>
+                    <td><button onclick="deleteStudent(this)">Delete</button></td>`;
+				let tbody = document.getElementsByTagName('tbody')[0];
+				tbody.append(tr);
+
+				firstNameBox.value = "";
+				lastNameBox.value = "";
+				emailBox.value = "";
+				firstNameBox.focus();
+			}
+		})
+
+
+		function deleteStudent(btn) {
+			let tdBtn = btn.parentNode;
+
+			let tr = tdBtn.parentNode;
+
+			let tds = tr.children;
+
+			let name = tds[0].innerText + ' ' + tds[1].innerText;
+
+			if (!confirm(`Are you sure to delete ${name}`)) {
+				return;
+			} else {
+				tr.remove();
+			}
+		}
+	</script>
+</body>
+
+</html>

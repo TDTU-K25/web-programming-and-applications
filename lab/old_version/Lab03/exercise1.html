@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Bootstrap Example</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+
+	<style>
+		form {
+			max-width: 400px;
+			margin: auto;
+		}
+	</style>
+
+	<div class="container">
+
+		<form action="/action_page.php" novalidate>
+			<h2>Login</h2>
+			<div class="form-group">
+				<label for="email">Email:</label>
+				<input type="email" class="form-control" id="email" placeholder="Enter email" name="email">
+			</div>
+			<div class="form-group">
+				<label for="pwd">Password:</label>
+				<input type="password" class="form-control" id="pwd" placeholder="Enter password" name="pwd">
+			</div>
+			<div id="errorMsg"></div>
+			<button type="submit" class="btn btn-default" id="submitBtn">Submit</button>
+		</form>
+
+		<script>
+			let submitBtn = document.getElementById('submitBtn');
+			let errorMsgBox = document.getElementById('errorMsg');
+
+			function validateEmail(email) {
+				if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
+					return true;
+				}
+				return false;
+			}
+
+			function validateForm() {
+				let emailBox = document.getElementById('email');
+				let passwordBox = document.getElementById('pwd');
+
+
+				errorMsgBox.style.color = "red";
+
+				let email = emailBox.value;
+				let password = passwordBox.value;
+
+				let isValid = true;
+
+				if (email.length === 0) {
+					errorMsgBox.innerText = "Please enter your email";
+					isValid = false;
+				}
+				else if (!validateEmail(email)) {
+					errorMsgBox.innerText = "Your email is not correct";
+					isValid = false;
+				}
+				else if (password.length === 0) {
+					errorMsgBox.innerText = "Please enter your password";
+					isValid = false;
+				} else if (password.length < 6) {
+					errorMsgBox.innerText = "Your password must contain at least 6 characters";
+					isValid = false;
+				} else {
+					errorMsgBox.innerText = "";
+					isValid = true;
+				}
+				return isValid;
+			}
+
+			submitBtn.addEventListener('click', function (event) {
+				if (!validateForm()) {
+					event.preventDefault();
+				} else {
+					event.preventDefault();
+					errorMsgBox.style.color = "green";
+					errorMsgBox.innerText = "Form data have been submitted to server";
+				}
+			})
+		</script>
+	</div>
+
+</body>
+
+</html>
